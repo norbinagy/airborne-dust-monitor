@@ -16,5 +16,11 @@ namespace airborne_dust_monitor
         {
             InitializeComponent();
         }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            DatabaseManager dbm = new DatabaseManager();
+            dbm.QueryLatest();
+        }
     }
 }
