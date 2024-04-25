@@ -81,6 +81,7 @@ namespace airborne_dust_monitor
         {
             databaseManager = new DatabaseManager();
             entryId = 207;
+            databaseManager.TestQuery("2024-03-25 19:09");
         }
 
         private void numericUpDown1_ValueChanged(object sender, EventArgs e)
