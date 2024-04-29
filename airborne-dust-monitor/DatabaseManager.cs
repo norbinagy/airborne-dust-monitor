@@ -91,10 +91,10 @@ namespace airborne_dust_monitor
             return sensorData;
         }
 
-        public void TestQuery(string date)
+        public List<SensorData> TestQueryByDate(string date)
         {
-            SensorData sensorData = new SensorData();
-            string query = "SELECT * FROM TestTable WHERE ttn-recieved-at = " + date;
+            List<SensorData> sensorDataList = new List<SensorData>();
+            string query = $"SELECT * FROM TestTable WHERE \"process-status\" = 'Success' AND \"ttn-received-at\" = '{date}';";
 
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
@@ -103,18 +103,31 @@ namespace airborne_dust_monitor
                 {
                     using (SqlDataReader reader = command.ExecuteReader())
                     {
-                        if (reader.Read())
+                        if (reader.HasRows)
                         {
-                            sensorData.ProcessStatus = reader.GetString(0);
-                            sensorData.SensorID = int.Parse(reader.GetString(1));
-                            sensorData.Date = DateTime.Parse(reader.GetString(2));
-                            sensorData.ParticulateMatter = float.Parse(reader.GetString(3));
-                            sensorData.Temperature = float.Parse(reader.GetString(4));
-                            sensorData.Humidity = int.Parse(reader.GetString(5));
-                            sensorData.BatteryVoltage = float.Parse(reader.GetString(6));
-                            sensorData.MeasureInterval = int.Parse(reader.GetString(7));
+                            while (reader.Read())
+                            {
+                                SensorData sensorData = new SensorData();
+                                sensorData.ProcessStatus = reader.GetString(0);
+                                sensorData.SensorID = int.Parse(reader.GetString(1));
+                                sensorData.Date = DateTime.Parse(reader.GetString(2));
+                                sensorData.ParticulateMatter = float.Parse(reader.GetString(3), CultureInfo.InvariantCulture);
+                                sensorData.Temperature = float.Parse(reader.GetString(4), CultureInfo.InvariantCulture);
+                                sensorData.Humidity = int.Parse(reader.GetString(5));
+                                sensorData.BatteryVoltage = float.Parse(reader.GetString(6), CultureInfo.InvariantCulture);
+                                sensorData.MeasureInterval = int.Parse(reader.GetString(7));
+                                sensorDataList.Add(sensorData);
 
-                            Console.WriteLine("Record: " + sensorData.ProcessStatus);
+                                Console.WriteLine("Record: " + sensorData.ProcessStatus);
+                                Console.WriteLine("Sensor ID: " + sensorData.SensorID);
+                                Console.WriteLine("Date: " + sensorData.Date);
+                                Console.WriteLine("Particulate Matter: " + sensorData.ParticulateMatter);
+                                Console.WriteLine("Temperature: " + sensorData.Temperature);
+                                Console.WriteLine("Humidity: " + sensorData.Humidity);
+                                Console.WriteLine("Battery Voltage: " + sensorData.BatteryVoltage);
+                                Console.WriteLine("Measure Interval: " + sensorData.MeasureInterval);
+                            }
+                            
                         }
                         else
                         {
@@ -123,6 +136,7 @@ namespace airborne_dust_monitor
                     }
                 }
             }
+            return sensorDataList;
         }
     }
 }
