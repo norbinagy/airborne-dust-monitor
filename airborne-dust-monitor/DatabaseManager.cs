@@ -51,46 +51,6 @@ namespace airborne_dust_monitor
             }
         }
 
-        public TestSensorData QueryByEntryID(string entryID)
-        {
-            TestSensorData sensorData = new TestSensorData();
-            string query = "SELECT created_at, entry_id, TEMPERATURE, HUMIDITY FROM TestHumidity WHERE entry_id = " + entryID;
-
-            using (SqlConnection connection = new SqlConnection(connectionStringOld))
-            {
-                connection.Open();
-                using (SqlCommand command = new SqlCommand(query, connection))
-                {
-                    using (SqlDataReader reader = command.ExecuteReader())
-                    {
-                        if (reader.Read())
-                        {
-                            string createdAt = reader.GetString(0);
-                            string entryId = reader.GetString(1);
-                            string temperature = reader.GetString(2);
-                            string humidity = reader.GetString(3);
-
-                            sensorData.createdAt = DateTime.Parse(createdAt);
-                            sensorData.entryId = Int32.Parse(entryId);
-                            sensorData.temperature = Double.Parse(temperature, CultureInfo.InvariantCulture);
-                            sensorData.humidity = Double.Parse(humidity, CultureInfo.InvariantCulture);
-
-                            Console.WriteLine("Record:");
-                            Console.WriteLine("Created At: " + sensorData.createdAt);
-                            Console.WriteLine("Entry ID: " + sensorData.entryId);
-                            Console.WriteLine("Temperature: " + sensorData.temperature);
-                            Console.WriteLine("Humidity: " + sensorData.humidity);
-                        }
-                        else
-                        {
-                            Console.WriteLine("No records found.");
-                        }
-                    }
-                }
-            }
-            return sensorData;
-        }
-
         public List<SensorData> TestQueryByDate(string date)
         {
             List<SensorData> sensorDataList = new List<SensorData>();
