@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace airborne_dust_monitor
 {
@@ -11,13 +7,22 @@ namespace airborne_dust_monitor
         private Queue<double> dataQueue = new Queue<double>();
         private int windowSize;
         private double sum = 0;
+        private double average = 0;
+
+        public double Average
+        {
+            get
+            {
+                return average;
+            }
+        }
 
         public MovingAverageCalculator(int windowSize)
         {
             this.windowSize = windowSize;
         }
 
-        public double AddDataPoint(double newDataPoint)
+        public void AddDataPoint(double newDataPoint)
         {
             if (dataQueue.Count == windowSize)
             {
@@ -27,7 +32,12 @@ namespace airborne_dust_monitor
             dataQueue.Enqueue(newDataPoint);
             sum += newDataPoint;
 
-            return sum / dataQueue.Count;
+            average = sum / dataQueue.Count;
+        }
+
+        public override string ToString()
+        {
+            return average.ToString("0.000");
         }
     }
 }

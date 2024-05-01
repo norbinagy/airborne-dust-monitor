@@ -2,10 +2,6 @@
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms.VisualStyles;
 
 namespace airborne_dust_monitor
 {
@@ -87,7 +83,7 @@ namespace airborne_dust_monitor
                                 Console.WriteLine("Battery Voltage: " + sensorData.BatteryVoltage);
                                 Console.WriteLine("Measure Interval: " + sensorData.MeasureInterval);
                             }
-                            
+
                         }
                         else
                         {
