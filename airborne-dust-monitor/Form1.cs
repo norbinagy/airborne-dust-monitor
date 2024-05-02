@@ -108,25 +108,25 @@ namespace airborne_dust_monitor
                 if (sensorData != null)
                 {
                     chart1.Series["ParticulateMatterSeries" + sensorData.SensorID].Points.AddXY(sensorData.Date.ToShortTimeString(), sensorData.ParticulateMatter);
-                    if (chart1.Series["ParticulateMatterSeries" + sensorData.SensorID].Points.Count > 11)
+                    if (chart1.Series["ParticulateMatterSeries" + sensorData.SensorID].Points.Count > 110)
                     {
                         chart1.Series["ParticulateMatterSeries" + sensorData.SensorID].Points.RemoveAt(0);
                     }
 
                     chart2.Series["TemperatureSeries" + sensorData.SensorID].Points.AddXY(sensorData.Date.ToShortTimeString(), sensorData.Temperature);
-                    if (chart2.Series["TemperatureSeries" + sensorData.SensorID].Points.Count > 11)
+                    if (chart2.Series["TemperatureSeries" + sensorData.SensorID].Points.Count > 110)
                     {
                         chart2.Series["TemperatureSeries" + sensorData.SensorID].Points.RemoveAt(0);
                     }
 
                     chart3.Series["HumiditySeries" + sensorData.SensorID].Points.AddXY(sensorData.Date.ToShortTimeString(), sensorData.Humidity);
-                    if (chart3.Series["HumiditySeries" + sensorData.SensorID].Points.Count > 11)
+                    if (chart3.Series["HumiditySeries" + sensorData.SensorID].Points.Count > 110)
                     {
                         chart3.Series["HumiditySeries" + sensorData.SensorID].Points.RemoveAt(0);
                     }
 
                     chart4.Series["BatteryVoltageSeries" + sensorData.SensorID].Points.AddXY(sensorData.Date.ToShortTimeString(), sensorData.BatteryVoltage);
-                    if (chart4.Series["BatteryVoltageSeries" + sensorData.SensorID].Points.Count > 11)
+                    if (chart4.Series["BatteryVoltageSeries" + sensorData.SensorID].Points.Count > 110)
                     {
                         chart4.Series["BatteryVoltageSeries" + sensorData.SensorID].Points.RemoveAt(0);
                     }

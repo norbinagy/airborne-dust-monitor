@@ -7,44 +7,11 @@ namespace airborne_dust_monitor
 {
     internal class DatabaseManager
     {
-        private readonly string connectionStringOld;
         private readonly string connectionString;
 
         public DatabaseManager()
         {
-            connectionStringOld = @"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\nagyn\source\repos\airborne-dust-monitor\airborne-dust-monitor\TestDatabase.mdf;Integrated Security=True";
             connectionString = @"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\nagyn\source\repos\airborne-dust-monitor\airborne-dust-monitor\TestDatabaseFinal.mdf;Integrated Security=True";
-        }
-
-        public void QueryLatest()
-        {
-            string query = "SELECT TOP 1 created_at, HUMIDITY, SENSOR_ID FROM TestHumidity ORDER BY created_at DESC";
-
-            using (SqlConnection connection = new SqlConnection(connectionStringOld))
-            {
-                connection.Open();
-                using (SqlCommand command = new SqlCommand(query, connection))
-                {
-                    using (SqlDataReader reader = command.ExecuteReader())
-                    {
-                        if (reader.Read())
-                        {
-                            string createdAt = reader.GetString(0);
-                            string humidity = reader.GetString(1);
-                            string sensorId = reader.GetString(2);
-
-                            Console.WriteLine("Latest Record:");
-                            Console.WriteLine("Created At: " + createdAt);
-                            Console.WriteLine("Humidity: " + humidity);
-                            Console.WriteLine("Sensor ID: " + sensorId);
-                        }
-                        else
-                        {
-                            Console.WriteLine("No records found.");
-                        }
-                    }
-                }
-            }
         }
 
         public List<SensorData> TestQueryByDate(string date)
