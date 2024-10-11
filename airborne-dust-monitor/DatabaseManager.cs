@@ -11,7 +11,7 @@ namespace airborne_dust_monitor
 
         public DatabaseManager()
         {
-            connectionString = @"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\nagyn\source\repos\airborne-dust-monitor\airborne-dust-monitor\TestDatabaseFinal.mdf;Integrated Security=True";
+            connectionString = @"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\Norbi\Source\Repos\norbinagy\airborne-dust-monitor\airborne-dust-monitor\TestDatabaseFinal.mdf;Integrated Security=True";
         }
 
         public List<SensorData> TestQueryByDate(string date)

@@ -62,6 +62,8 @@ namespace airborne_dust_monitor
                 chart1.Series["ParticulateMatterSeries" + i].ChartType = SeriesChartType.Line;
                 chart1.Series["ParticulateMatterSeries" + i].BorderWidth = 2;
                 chart1.Series["ParticulateMatterSeries" + i].LegendText = "Szenzor" + i;
+                chart1.Series["ParticulateMatterSeries" + i].Color = SetChartSeriesColorByID(i);
+
             }
 
             chart2.Titles.Add("Hőmérséklet (°C)");
@@ -74,6 +76,7 @@ namespace airborne_dust_monitor
                 chart2.Series["TemperatureSeries" + i].ChartType = SeriesChartType.Line;
                 chart2.Series["TemperatureSeries" + i].BorderWidth = 2;
                 chart2.Series["TemperatureSeries" + i].LegendText = "Szenzor" + i;
+                chart2.Series["TemperatureSeries" + i].Color = SetChartSeriesColorByID(i);
             }
 
             chart3.Titles.Add("Páratartalom (%)");
@@ -86,6 +89,7 @@ namespace airborne_dust_monitor
                 chart3.Series["HumiditySeries" + i].ChartType = SeriesChartType.Line;
                 chart3.Series["HumiditySeries" + i].BorderWidth = 2;
                 chart3.Series["HumiditySeries" + i].LegendText = "Szenzor" + i;
+                chart3.Series["HumiditySeries" + i].Color = SetChartSeriesColorByID(i);
             }
 
             chart4.Titles.Add("Akkumulátor feszültség (V)");
@@ -98,7 +102,22 @@ namespace airborne_dust_monitor
                 chart4.Series["BatteryVoltageSeries" + i].ChartType = SeriesChartType.Line;
                 chart4.Series["BatteryVoltageSeries" + i].BorderWidth = 2;
                 chart4.Series["BatteryVoltageSeries" + i].LegendText = "Szenzor" + i;
+                chart4.Series["BatteryVoltageSeries" + i].Color = SetChartSeriesColorByID(i);
             }
+        }
+
+        private System.Drawing.Color SetChartSeriesColorByID(int i)
+        {
+            switch (i)
+            {
+                case 0: return System.Drawing.Color.Blue;
+                case 1: return System.Drawing.Color.Yellow;
+                case 2: return System.Drawing.Color.Green;
+                case 3: return System.Drawing.Color.Purple;
+                case 4: return System.Drawing.Color.Orange;
+                default: return System.Drawing.Color.Black;
+            }
+
         }
 
         private void UpdateChartsWithData(List<SensorData> sensorDataList)
@@ -318,6 +337,18 @@ namespace airborne_dust_monitor
         {
             alertOnCooldown = true;
             Task.Delay(10000).ContinueWith(t => alertOnCooldown = false);
+        }
+
+        private void grafikonToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            panel2.Visible = false;
+            panel1.Visible = true;
+        }
+
+        private void terkepToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            panel1.Visible=false;
+            panel2.Visible = true;
         }
     }
 }
