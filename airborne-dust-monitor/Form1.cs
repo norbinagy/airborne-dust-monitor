@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net.Mail;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
@@ -15,16 +16,16 @@ namespace airborne_dust_monitor
         private Dictionary<string, (MovingAverageCalculator particle, MovingAverageCalculator temp, MovingAverageCalculator humidity, MovingAverageCalculator voltage)> movingAverages;
         private int movingAverageWindow;
         private float particulateMatterThreshold;
+        private bool emailSent;
         private float temperatureThreshold;
         private int humidityThreshold;
         private float batteryVoltageThreshold;
-        private bool alertOnCooldown;
 
         public Form1()
         {
             InitializeComponent();
             InitializeCharts();
-            alertOnCooldown = false;
+            emailSent = false;
             databaseManager = new DatabaseManager();
             lastQueryTime = DateTime.Parse("2024.03.29 3:59");
             sensorDataList = new List<SensorData>();
@@ -96,6 +97,8 @@ namespace airborne_dust_monitor
             chart4.Series.Clear();
             chart4.ChartAreas.Add(new ChartArea("BatteryVoltageChartArea"));
             chart4.ChartAreas[0].AxisX.Interval = 1;
+            chart4.ChartAreas[0].AxisY.Minimum = 3.5;
+            chart4.ChartAreas[0].AxisY.Maximum = 4.5;
             for (int i = 0; i < 9; i++)
             {
                 chart4.Series.Add(new Series("BatteryVoltageSeries" + i));
@@ -294,6 +297,7 @@ namespace airborne_dust_monitor
         private void numericUpDown2_ValueChanged(object sender, EventArgs e)
         {
             particulateMatterThreshold = (float)numericUpDown2.Value;
+
         }
 
         private void numericUpDown3_ValueChanged(object sender, EventArgs e)
@@ -308,35 +312,30 @@ namespace airborne_dust_monitor
 
         private void CheckThresholdValues(SensorData sensorData)
         {
-            if (sensorData != null && !alertOnCooldown)
+            if (sensorData != null)
             {
                 if (particulateMatterThreshold != 0 && sensorData.ParticulateMatter > particulateMatterThreshold)
                 {
-                    AlertCooldown();
-                    MessageBox.Show($"Szenzor {sensorData.SensorID} szálló por értéke meghaladta a küszöbértéket! Érték: {sensorData.ParticulateMatter}");
+                    chart1.Series["ParticulateMatterSeries" + sensorData.SensorID].Color = System.Drawing.Color.Red;
+                    if (!emailSent)
+                    {
+                        //EmailSender.SendEmail("nagy.norbert1226@gmail.com", "Teszt", $"Szenzor{sensorData.SensorID}: Szállópor átlépte a határértéket: {particulateMatterThreshold}");
+                        emailSent = true;
+                    }
                 }
                 if (temperatureThreshold != 0 && sensorData.Temperature > temperatureThreshold)
                 {
-                    AlertCooldown();
-                    MessageBox.Show($"Szenzor {sensorData.SensorID} hőmérséklet értéke meghaladta a küszöbértéket! Érték: {sensorData.Temperature}");
+                    chart2.Series["TemperatureSeries" + sensorData.SensorID].Color = System.Drawing.Color.Red;
                 }
                 if (humidityThreshold != 0 && sensorData.Humidity > humidityThreshold)
                 {
-                    AlertCooldown();
-                    MessageBox.Show($"Szenzor {sensorData.SensorID} páratartalom értéke meghaladta a küszöbértéket! Érték: {sensorData.Humidity}");
+                    chart3.Series["HumiditySeries" + sensorData.SensorID].Color = System.Drawing.Color.Red;
                 }
                 if (batteryVoltageThreshold != 0 && sensorData.BatteryVoltage > batteryVoltageThreshold)
                 {
-                    AlertCooldown();
-                    MessageBox.Show($"Szenzor {sensorData.SensorID} akkumulátor feszültség értéke meghaladta a küszöbértéket! Érték: {sensorData.BatteryVoltage}");
+                    chart4.Series["BatteryVoltageSeries" + sensorData.SensorID].Color = System.Drawing.Color.Red;
                 }
             }
-        }
-
-        private void AlertCooldown()
-        {
-            alertOnCooldown = true;
-            Task.Delay(10000).ContinueWith(t => alertOnCooldown = false);
         }
 
         private void grafikonToolStripMenuItem_Click(object sender, EventArgs e)
@@ -349,6 +348,66 @@ namespace airborne_dust_monitor
         {
             panel1.Visible=false;
             panel2.Visible = true;
+        }
+
+        private void ResetParticulateMatterSeriesColor()
+        {
+            for (int i = 0; i < 9; i++)
+            {
+                chart1.Series["ParticulateMatterSeries" + i].Color = SetChartSeriesColorByID(i);
+            }
+        }
+
+        private void ResetTemperatureSeriesColor()
+        {
+            for (int i = 0; i < 9; i++)
+            {
+                chart2.Series["TemperatureSeries" + i].Color = SetChartSeriesColorByID(i);
+            }
+        }
+
+        private void ResetHumiditySeriesColor()
+        {
+            for (int i = 0; i < 9; i++)
+            {
+                chart3.Series["HumiditySeries" + i].Color = SetChartSeriesColorByID(i);
+            }
+        }
+
+        private void ResetBatteryVoltageSeriesColor()
+        {
+            for (int i = 0; i < 9; i++)
+            {
+                chart4.Series["BatteryVoltageSeries" + i].Color = SetChartSeriesColorByID(i);
+            }
+        }
+
+        private void button5_Click(object sender, EventArgs e)
+        {
+            ResetParticulateMatterSeriesColor();
+            numericUpDown2.Value = 0;
+            emailSent = false;
+        }
+
+        private void button6_Click(object sender, EventArgs e)
+        {
+            ResetTemperatureSeriesColor();
+            numericUpDown3.Value = 0;
+            emailSent = false;
+        }
+
+        private void button7_Click(object sender, EventArgs e)
+        {
+            ResetHumiditySeriesColor();
+            numericUpDown1.Value = 0;
+            emailSent = false;
+        }
+
+        private void button8_Click(object sender, EventArgs e)
+        {
+            ResetBatteryVoltageSeriesColor();
+            numericUpDown4.Value = 0;
+            emailSent = false;
         }
     }
 }
