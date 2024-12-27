@@ -8,18 +8,17 @@ using System.Threading.Tasks;
 
 namespace airborne_dust_monitor
 {
-    internal class EmailSender
+    internal static class EmailSender
     {
-        public static void SendEmail(string toAddress, string subject, string body)
-        {
-            // Gmail SMTP server settings
-            string smtpAddress = "smtp.gmail.com";
-            int portNumber = 587;
-            bool enableSSL = true;
+        static string smtpAddress;
+        static int portNumber;
+        static bool enableSSL;
+        static string fromAddress;
+        static string toAddress;
+        static string password;
 
-            // Sender's email and password (use app-specific password or OAuth for security)
-            string fromAddress = "nagy.norbert1226@gmail.com"; // Replace with your Gmail address
-            string password = "afec mhey omye ttnu";    // Replace with your Gmail password or app password
+        public static void SendEmail(string subject, string body)
+        {
 
             using (MailMessage mail = new MailMessage())
             {
@@ -27,7 +26,7 @@ namespace airborne_dust_monitor
                 mail.To.Add(toAddress);
                 mail.Subject = subject;
                 mail.Body = body;
-                mail.IsBodyHtml = true; // Set to true if the body is HTML
+                mail.IsBodyHtml = true;
 
                 using (SmtpClient smtp = new SmtpClient(smtpAddress, portNumber))
                 {
@@ -37,5 +36,13 @@ namespace airborne_dust_monitor
                 }
             }
         }
+
+        public static string SmtpAddress { get => smtpAddress; set => smtpAddress = value; }
+        public static int PortNumber { get => portNumber; set => portNumber = value; }
+        public static bool EnableSSL { get => enableSSL; set => enableSSL = value; }
+        public static string FromAddress { get => fromAddress; set => fromAddress = value; }
+        public static string ToAddress { get => toAddress; set => toAddress = value; }
+        public static string Password { get => password; set => password = value; }
+
     }
 }
