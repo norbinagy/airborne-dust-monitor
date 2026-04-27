@@ -1,0 +1,69 @@
+﻿<Window x:Class="AirborneDustMonitor.UI.Views.SettingsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:AirborneDustMonitor.UI.Views"
+        mc:Ignorable="d"
+        Title="Beállítások" Height="450" Width="800" Loaded="Window_Loaded">
+    <Grid Margin="15">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
+            <StackPanel>
+                <GroupBox Header="Email értesítések">
+                    <StackPanel Margin="5">
+                        <TextBlock Text="SMTP Szerver:"/>
+                        <TextBox Text="{Binding Settings.Email.Host, UpdateSourceTrigger=PropertyChanged}"/>
+                        <TextBlock Text="Port:" Margin="0,5,0,0"/>
+                        <TextBox Text="{Binding Settings.Email.Port, UpdateSourceTrigger=PropertyChanged}"/>
+                        <TextBlock Text="Felhasználónév:" Margin="0,5,0,0"/>
+                        <TextBox Text="{Binding Settings.Email.Username, UpdateSourceTrigger=PropertyChanged}"/>
+                        <TextBlock Text="Jelszó:" Margin="0,5,0,0"/>
+                        <PasswordBox x:Name="PasswordBox" Margin="0,5,0,0"/>
+                        <TextBlock Text="Feladó:" Margin="0,5,0,0"/>
+                        <TextBox Text="{Binding Settings.Email.From, UpdateSourceTrigger=PropertyChanged}"/>
+                        <TextBlock Text="Címzett:" Margin="0,5,0,0"/>
+                        <TextBox Text="{Binding Settings.Email.To, UpdateSourceTrigger=PropertyChanged}"/>
+                    </StackPanel>
+                </GroupBox>
+                <GroupBox Header="Lekérdezés">
+                    <StackPanel Margin="5">
+                        <TextBlock Text="ConnectionString:"/>
+                        <TextBox Text="{Binding Settings.Database.ConnectionString, UpdateSourceTrigger=PropertyChanged}"/>
+                        <TextBlock Text="Intervallum (ms):"/>
+                        <TextBox Text="{Binding Settings.Polling.PollIntervalMilliseconds, UpdateSourceTrigger=PropertyChanged}"/>
+                        <TextBlock Text="Léptetés (perc):" Margin="0,5,0,0"/>
+                        <TextBox Text="{Binding Settings.Polling.PollDateIncrementMinutes, UpdateSourceTrigger=PropertyChanged}"/>
+                    </StackPanel>
+                </GroupBox>
+                <GroupBox Header="Riasztások">
+                    <StackPanel Margin="5">
+                        <CheckBox Content="Email küldése engedélyezve" 
+                                  IsChecked="{Binding Settings.Alert.EnableEmailAlerts}"/>
+                        <TextBlock Text="Min akkumulátor feszültég:" Margin="0,5,0,0"/>
+                        <TextBox Text="{Binding Settings.Alert.BatteryMinVoltage, UpdateSourceTrigger=PropertyChanged}"/>
+                        <TextBlock Text="Max akkumulátor feszültég:" Margin="0,5,0,0"/>
+                        <TextBox Text="{Binding Settings.Alert.BatteryMaxVoltage, UpdateSourceTrigger=PropertyChanged}"/>
+                        <TextBlock Text="Akkumulátor feszültség riasztás ennyi hiba után:" Margin="0,5,0,0"/>
+                        <TextBox Text="{Binding Settings.Alert.BatteryVoltageAlertCount, UpdateSourceTrigger=PropertyChanged}"/>
+                        <TextBlock Text="Riasztás 0 értékről ennyi eset után:" Margin="0,5,0,0"/>
+                        <TextBox Text="{Binding Settings.Alert.ConsecutiveZerosAlertCount, UpdateSourceTrigger=PropertyChanged}"/>
+                    </StackPanel>
+                </GroupBox>
+                <GroupBox Header="Statisztikák">
+                    <StackPanel Margin="5">
+                        <TextBlock Text="Mozgóátlag intervallum:"/>
+                        <TextBox Text="{Binding Settings.Data.SimpleMovingAverageWindowSize, UpdateSourceTrigger=PropertyChanged}"/>
+                    </StackPanel>
+                </GroupBox>
+            </StackPanel>
+        </ScrollViewer>
+        <Button Grid.Row="1" Content="Mentés és bezárás" 
+                Command="{Binding SaveAndCloseCommand}"
+                CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}"
+                Padding="10,5" HorizontalAlignment="Right" Margin="0,15,0,0"/>
+    </Grid>
+</Window>

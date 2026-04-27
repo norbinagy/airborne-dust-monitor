@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AirborneDustMonitor.UI", "A
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AirborneDustMonitor.Infrastructure", "AirborneDustMonitor.Infrastructure\AirborneDustMonitor.Infrastructure.csproj", "{9DA6868B-5B94-4768-8DE0-C49E080371E5}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AirborneDustMonitor.Tests", "AirborneDustMonitor.Tests\AirborneDustMonitor.Tests.csproj", "{13DBBFD3-FC40-48EE-8FEA-F80947E59B47}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{9DA6868B-5B94-4768-8DE0-C49E080371E5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9DA6868B-5B94-4768-8DE0-C49E080371E5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9DA6868B-5B94-4768-8DE0-C49E080371E5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{13DBBFD3-FC40-48EE-8FEA-F80947E59B47}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{13DBBFD3-FC40-48EE-8FEA-F80947E59B47}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{13DBBFD3-FC40-48EE-8FEA-F80947E59B47}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{13DBBFD3-FC40-48EE-8FEA-F80947E59B47}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
