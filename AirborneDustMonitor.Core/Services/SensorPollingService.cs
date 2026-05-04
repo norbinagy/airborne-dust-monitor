@@ -57,11 +57,16 @@ namespace AirborneDustMonitor.Core.Services
                     currentDate = currentDate.AddMinutes(_pollDateIncrement);
                     await Task.Delay(_pollingInterval, stoppingToken);
                 }
+                catch (OperationCanceledException)
+                {
+                    // A program leállítása miatt megszakadt a művelet, ezt nem kell külön kezelni
+                    return;
+                }
                 catch (Exception ex)
                 {
                     Debug.WriteLine($"Polling hiba (valószínűleg rossz ConnectionString): {ex.Message}");
-                    await Task.Delay(10000, stoppingToken);
-                    continue;
+                    if (stoppingToken.IsCancellationRequested) return;
+                    await Task.Delay(10000, CancellationToken.None);
                 }
             }
         }
