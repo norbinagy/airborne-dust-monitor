@@ -9,7 +9,7 @@ using System.Windows;
 namespace AirborneDustMonitor.UI.ViewModels
 {
     // ViewModel a főablakhoz, amely kezeli a különböző metrikák megjelenítését és az alert üzeneteket.
-    public partial class MainWindowViewModel : ObservableObject
+    public partial class MainWindowViewModel : ObservableObject, IDisposable
     {
         public ObservableCollection<MetricDisplayViewModel> MetricDisplays { get; }
         private readonly AlertService _alertService;
@@ -54,25 +54,28 @@ namespace AirborneDustMonitor.UI.ViewModels
             _alertService.AlertRaised -= AlertHandler;
         }
 
-        public void AlertHandler(Alert alert)
+        public async void AlertHandler(Alert alert)
         {
             if (alert.Type == AlertType.PeakValue)
             {
-                ShowToast($"{alert.Message}\n{alert.MetricType}\nSzenzor: {alert.SensorID}\n{alert.Date}");
+                await ShowToastAsync($"{alert.Message}\n{alert.MetricType}\nSzenzor: {alert.SensorID}\n{alert.Date}");
             }
         }
 
-        private async void ShowToast(string message)
+        [RelayCommand]
+        private async Task ShowToastAsync(string message)
         {
-            await Application.Current.Dispatcher.Invoke(async () =>
+            ToastMessage = message;
+            IsToastOpen = true;
+
+            try
             {
-                ToastMessage = message;
-                IsToastOpen = true;
-
                 await Task.Delay(5000);
-
+            }
+            finally
+            {
                 IsToastOpen = false;
-            });
+            }
         }
 
         [RelayCommand]
@@ -85,6 +88,11 @@ namespace AirborneDustMonitor.UI.ViewModels
         private void OpenMap()
         {
             _windowService.ShowMapWindow();
+        }
+
+        public void Dispose()
+        {
+            DisposeMetricDisplays();
         }
     }
 }

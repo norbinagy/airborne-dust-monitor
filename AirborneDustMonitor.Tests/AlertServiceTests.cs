@@ -26,7 +26,7 @@ namespace AirborneDustMonitor.Tests
             alertService.AlertRaised += (alert) => raisedAlerts.Add(alert);
 
             var badData = new MetricData(MetricType.Humidity, 100, new DateTime(2024, 1, 1), 2, 0, 0, 0);
-            alertService.ProcessSample(badData.MetricType, badData.SensorID, badData.Value);
+            alertService.ProcessSampleAsync(badData.MetricType, badData.SensorID, badData.Value);
 
             Assert.NotNull(raisedAlerts);
             Assert.Contains(raisedAlerts, a => a.Type == AlertType.PeakValue);

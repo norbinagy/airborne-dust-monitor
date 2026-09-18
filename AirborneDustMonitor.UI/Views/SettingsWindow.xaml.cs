@@ -18,14 +18,14 @@ namespace AirborneDustMonitor.UI.Views
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             if (DataContext is SettingsViewModel viewModel)
-                viewModel.Settings.Email.Password = PasswordBox.Password;
+                viewModel.Settings.Email.ProtectedPassword = PasswordBox.Password;
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             if (DataContext is SettingsViewModel viewModel)
             {
-                PasswordBox.Password = viewModel.Settings.Email.Password;
+                PasswordBox.Password = viewModel.Settings.Email.ProtectedPassword;
             }
         }
     }

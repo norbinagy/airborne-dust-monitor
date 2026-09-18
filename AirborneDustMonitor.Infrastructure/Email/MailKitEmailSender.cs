@@ -36,10 +36,13 @@ namespace AirborneDustMonitor.Infrastructure.Email
                 SecureSocketOptions.StartTls,
                 cancellationToken);
 
-            await smtp.AuthenticateAsync(
-                _settings.Username,
-                _settings.Password,
-                cancellationToken);
+            if(DataProtectionHelper.TryUnprotect(_settings.ProtectedPassword, out var unprotectedPassword))
+            {
+                await smtp.AuthenticateAsync(
+                    _settings.Username,
+                    unprotectedPassword,
+                    cancellationToken);
+            }
 
             await smtp.SendAsync(email, cancellationToken);
             await smtp.DisconnectAsync(true, cancellationToken);

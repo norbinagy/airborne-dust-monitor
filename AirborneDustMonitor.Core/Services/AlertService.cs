@@ -27,7 +27,7 @@ namespace AirborneDustMonitor.Core.Services
         }
 
         // A ProcessSample metódus a bejövő mintákat értékeli a regisztrált szabályok alapján, és ha egy szabály nem null Alert-et ad vissza, azt kiváltja illetve emailt küld(kivéve csúcsértékekről), ha aktív a beállítás.
-        public void ProcessSample(MetricType metricType, int sensorID, decimal value)
+        public async Task ProcessSampleAsync(MetricType metricType, int sensorID, decimal value)
         {
             foreach (var rule in _alertRules)
             {
@@ -45,7 +45,7 @@ namespace AirborneDustMonitor.Core.Services
                         {
                             thresholdRule.MarkEmailSent(metricType);
                         }
-                        HandleEmailAlertAsync(alert).Wait();
+                        await HandleEmailAlertAsync(alert);
                     }
                 }
             }

@@ -18,7 +18,7 @@ namespace AirborneDustMonitor.UI.Views
         {
             if (DataContext is MainWindowViewModel viewModel)
             {
-                viewModel.DisposeMetricDisplays();
+                viewModel.Dispose();
             }
         }
     }

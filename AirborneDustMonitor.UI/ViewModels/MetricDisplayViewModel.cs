@@ -13,7 +13,7 @@ using System.Windows;
 namespace AirborneDustMonitor.UI.ViewModels
 {
     // Ez a ViewModel egy adott metrikához tartozó grafikon és statisztikák megjelenítéséért felelős.
-    public partial class MetricDisplayViewModel : ObservableObject, IObserver<MetricData>
+    public partial class MetricDisplayViewModel : ObservableObject, IObserver<MetricData>, IDisposable
     {
         public string Name { get; private set; }
         public MetricType MetricType { get; private set; }
@@ -23,6 +23,7 @@ namespace AirborneDustMonitor.UI.ViewModels
         private readonly Dictionary<int, LineSeries> _sensorSeries;
         private readonly AlertService _alertService;
         private IDisposable _unsubscriber;
+        private const int MaxDataPoints = 50;
 
         [ObservableProperty]
         private decimal _maxValue;
@@ -81,7 +82,7 @@ namespace AirborneDustMonitor.UI.ViewModels
                 var xValue = DateTimeAxis.ToDouble(data.Date);
                 series.Points.Add(new DataPoint(xValue, Decimal.ToDouble(data.Value)));
 
-                if (series.Points.Count > 50) series.Points.RemoveAt(0);
+                if (series.Points.Count > MaxDataPoints) series.Points.RemoveAt(0);
 
                 PlotModel.InvalidatePlot(true);
 
@@ -126,6 +127,12 @@ namespace AirborneDustMonitor.UI.ViewModels
                         AlertingSensors.Remove(Alert.SensorID);
                 });
             }
+        }
+
+        public void Dispose()
+        {
+            _alertService.AlertRaised -= OnAlertRaised;
+            _unsubscriber?.Dispose();
         }
     }
 }

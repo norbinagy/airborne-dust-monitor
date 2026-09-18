@@ -1,25 +1,30 @@
-﻿using System.Security.Cryptography;
+﻿using System.Runtime.Versioning;
+using System.Security.Cryptography;
 using System.Text;
 
 namespace AirborneDustMonitor.Infrastructure
 {
     // Ez a segédosztály a Windows Data Protection API-t használja a jelszavak biztonságos tárolásához. A Protect metódus titkosítja a sima szöveget, míg a TryUnprotect megpróbálja visszafejteni a titkosított szöveget és visszaadja az eredményt.
+    [SupportedOSPlatform("windows")]
     public static class DataProtectionHelper
     {
         public static string Protect(string plainText)
         {
+            if(string.IsNullOrEmpty(plainText)) return plainText;
+
             var bytes = Encoding.UTF8.GetBytes(plainText);
-
-            var protectedBytes = ProtectedData.Protect(
-                bytes,
-                optionalEntropy: null,
-                scope: DataProtectionScope.CurrentUser);
-
+            var protectedBytes = ProtectedData.Protect(bytes, optionalEntropy: null, scope: DataProtectionScope.CurrentUser);
             return Convert.ToBase64String(protectedBytes);
         }
 
-        public static bool TryUnprotect(string protectedText, out string? plainText)
+        public static bool TryUnprotect(string protectedText, out string plainText)
         {
+            if(string.IsNullOrEmpty(protectedText))
+            {
+                plainText = String.Empty;
+                return false;
+            }
+
             try
             {
                 var bytes = Convert.FromBase64String(protectedText);
@@ -29,7 +34,7 @@ namespace AirborneDustMonitor.Infrastructure
             }
             catch (Exception)
             {
-                plainText = null;
+                plainText = String.Empty;
                 return false;
             }
         }

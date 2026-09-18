@@ -36,21 +36,21 @@ namespace AirborneDustMonitor.Core.Services
                     using var scope = _serviceScopeFactory.CreateScope();
                     var db = scope.ServiceProvider.GetRequiredService<ISensorDb>();
 
-                    var sensors = db.GetSensorByDateAsync(currentDate);
+                    var sensors = await db.GetSensorByDateAsync(currentDate);
 
-                    if (sensors != null && sensors.Result.Count != 0)
+                    if (sensors != null && sensors.Count != 0)
                     {
-                        foreach (var sensor in sensors.Result)
+                        foreach (var sensor in sensors)
                         {
                             _dataService.AddSample(sensor.ParticulateMatter, MetricType.ParticulateMatter, sensor.Date, sensor.SensorID);
                             _dataService.AddSample(sensor.Temperature, MetricType.Temperature, sensor.Date, sensor.SensorID);
                             _dataService.AddSample(sensor.Humidity, MetricType.Humidity, sensor.Date, sensor.SensorID);
                             _dataService.AddSample(sensor.BatteryVoltage, MetricType.BatteryVoltage, sensor.Date, sensor.SensorID);
 
-                            _alertService.ProcessSample(MetricType.ParticulateMatter, sensor.SensorID, sensor.ParticulateMatter);
-                            _alertService.ProcessSample(MetricType.Temperature, sensor.SensorID, sensor.Temperature);
-                            _alertService.ProcessSample(MetricType.Humidity, sensor.SensorID, sensor.Humidity);
-                            _alertService.ProcessSample(MetricType.BatteryVoltage, sensor.SensorID, sensor.BatteryVoltage);
+                            await _alertService.ProcessSampleAsync(MetricType.ParticulateMatter, sensor.SensorID, sensor.ParticulateMatter);
+                            await _alertService.ProcessSampleAsync(MetricType.Temperature, sensor.SensorID, sensor.Temperature);
+                            await _alertService.ProcessSampleAsync(MetricType.Humidity, sensor.SensorID, sensor.Humidity);
+                            await _alertService.ProcessSampleAsync(MetricType.BatteryVoltage, sensor.SensorID, sensor.BatteryVoltage);
                         }
                     }
 

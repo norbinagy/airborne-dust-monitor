@@ -1,11 +1,13 @@
 ﻿using AirborneDustMonitor.Core.Interfaces;
 using AirborneDustMonitor.Core.Settings;
 using System.Diagnostics;
+using System.Runtime.Versioning;
 using System.Text.Json;
 
 namespace AirborneDustMonitor.Infrastructure
 {
     // Az alkalmazás beállításait JSON fájlban tárolja és biztosítja a beállítások betöltését és mentését.
+    [SupportedOSPlatform("windows")]
     public class JsonAppSettingsService : IAppSettingsService
     {
         public AppSettings Current { get; private set; }
@@ -14,36 +16,52 @@ namespace AirborneDustMonitor.Infrastructure
         // Konstruktor amely megpróbálja betölteni a beállításokat a JSON fájlból. Ha a fájl nem létezik vagy sérült, akkor alapértelmezett értékeket állít be és létrehozza a fájlt.
         public JsonAppSettingsService()
         {
+            var folder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "AirborneDustMonitor");
+            Directory.CreateDirectory(folder);
+            _filePath = Path.Combine(folder, "settings.json");
+
+            Current = LoadSettings();
+        }
+
+        private AppSettings LoadSettings()
+        {
             try
             {
-                var folder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "AirborneDustMonitor");
-                Directory.CreateDirectory(folder);
-                _filePath = Path.Combine(folder, "settings.json");
-
                 if (File.Exists(_filePath))
                 {
                     var json = File.ReadAllText(_filePath);
-                    Current = JsonSerializer.Deserialize<AppSettings>(json) ?? new AppSettings();
-
-                    if (DataProtectionHelper.TryUnprotect(Current.Email.Password, out var unprotectedPassword))
-                    {
-                        Current.Email.Password = unprotectedPassword!;
-                    }
-                }
-                else
-                {
-                    Current = new AppSettings();
-                    Save();
+                    return ParseAndValidate(json);
                 }
             }
             catch (Exception ex)
             {
                 Debug.WriteLine($"Sérült konfiguráció: {ex.Message}. Alapértelmezett értékek visszaállítása.");
-                Current = new AppSettings();
-                Save();
             }
 
+            return ResetToDefaults();
+        }
 
+        // A JSON fájl tartalmát deszerializálja, majd újra szérializálja, hogy ellenőrizze a struktúra épségét. Ha a struktúra nem egyezik, akkor kivételt dob.
+        private AppSettings ParseAndValidate(string json)
+        {
+            var deserialized = JsonSerializer.Deserialize<AppSettings>(json)
+            ?? throw new InvalidDataException("Null result.");
+
+            var reserializedJson = JsonSerializer.Serialize(deserialized, new JsonSerializerOptions { WriteIndented = true });
+            var original = JsonDocument.Parse(json).RootElement;
+            var reserialized = JsonDocument.Parse(reserializedJson).RootElement;
+
+            if (!JsonElement.DeepEquals(original, reserialized))
+                throw new InvalidDataException("Settings structure mismatch — resetting.");
+
+            return deserialized;
+        }
+
+        private AppSettings ResetToDefaults()
+        {
+            Current = new AppSettings();
+            Save();
+            return Current;
         }
 
         // Menti a beállításokat a JSON fájlba. A jelszót titkosítva tárolja.
@@ -51,20 +69,11 @@ namespace AirborneDustMonitor.Infrastructure
         {
             try
             {
-                if (!string.IsNullOrWhiteSpace(Current.Email.Password))
-                {
-                    Current.Email.Password = DataProtectionHelper.Protect(Current.Email.Password);
-                }
 
-                var json = JsonSerializer.Serialize(Current, new JsonSerializerOptions
-                {
-                    WriteIndented = true
-                });
+                var json = JsonSerializer.Serialize(Current, new JsonSerializerOptions { WriteIndented = true });
 
                 if (_filePath != null)
-                {
                     File.WriteAllText(_filePath, json);
-                }
             }
             catch (Exception ex)
             {

@@ -1,5 +1,6 @@
 ﻿using AirborneDustMonitor.Core.Interfaces;
 using AirborneDustMonitor.Core.Settings;
+using AirborneDustMonitor.Infrastructure;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System.Windows;
@@ -23,9 +24,9 @@ namespace AirborneDustMonitor.UI.ViewModels
         private void SaveAndClose(Window window)
         {
             var passwordBox = window.FindName("PasswordBox") as PasswordBox;
-            if (passwordBox != null)
+            if (passwordBox?.Password != null)
             {
-                Settings.Email.Password = passwordBox.Password;
+                Settings.Email.ProtectedPassword = DataProtectionHelper.Protect(passwordBox.Password);
             }
             _appSettingsService.Save();
             MessageBox.Show("Kérjük indítsa újra az alkalmazást a módosítások érvénybe léptetéséhez!", "Mentés", MessageBoxButton.OK, MessageBoxImage.Information);
