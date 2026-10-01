@@ -1,4 +1,5 @@
 ﻿using AirborneDustMonitor.Core.Entities;
+using System.Diagnostics;
 
 namespace AirborneDustMonitor.Core.Services
 {
@@ -37,6 +38,7 @@ namespace AirborneDustMonitor.Core.Services
 
         public void Publish(MetricData data)
         {
+            Debug.WriteLine($"MetricStream.Publish - Aktuális szál ID: {Thread.CurrentThread.ManagedThreadId} | Háttérszál? {Thread.CurrentThread.IsThreadPoolThread}");
             foreach (var observer in _observers)
             {
                 observer.OnNext(data);

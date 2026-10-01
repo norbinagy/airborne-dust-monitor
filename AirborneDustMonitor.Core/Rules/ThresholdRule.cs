@@ -6,32 +6,18 @@ namespace AirborneDustMonitor.Core.Rules
     {
         private readonly Dictionary<MetricType, decimal> _thresholds;
         private readonly Dictionary<(int, MetricType), AlertStatus> _alertStatuses;
-        private readonly Dictionary<MetricType, bool> _emailPending;
+        public bool NotifyByEmail { get; }
 
         public ThresholdRule()
         {
             _thresholds = new Dictionary<MetricType, decimal>();
             _alertStatuses = new Dictionary<(int, MetricType), AlertStatus>();
-            _emailPending = new Dictionary<MetricType, bool>();
+            NotifyByEmail = true;
         }
 
         public void SetThreshold(MetricType metricType, decimal threshold)
         {
             _thresholds[metricType] = threshold;
-            _emailPending[metricType] = true;
-        }
-
-        public bool IsEmailPending(MetricType metricType)
-        {
-            return _emailPending.TryGetValue(metricType, out bool pending) && pending;
-        }
-
-        public void MarkEmailSent(MetricType metricType)
-        {
-            if (_emailPending.ContainsKey(metricType))
-            {
-                _emailPending[metricType] = false;
-            }
         }
 
         public Alert? Evaluate(MetricType metricType, int sensorID, decimal value)

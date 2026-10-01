@@ -39,12 +39,8 @@ namespace AirborneDustMonitor.Core.Services
                 {
                     AlertRaised?.Invoke(alert);
 
-                    if ((ruleType == typeof(BatteryVoltageRule) || ruleType == typeof(ConsecutiveZeroValuesRule) || ruleType == typeof(ThresholdRule)) && _isEmailAlertActive)
+                    if (ruleInstance.NotifyByEmail && _isEmailAlertActive)
                     {
-                        if (ruleInstance is ThresholdRule thresholdRule && thresholdRule.IsEmailPending(metricType))
-                        {
-                            thresholdRule.MarkEmailSent(metricType);
-                        }
                         await HandleEmailAlertAsync(alert);
                     }
                 }

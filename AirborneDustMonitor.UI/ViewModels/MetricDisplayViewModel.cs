@@ -86,9 +86,9 @@ namespace AirborneDustMonitor.UI.ViewModels
 
                 PlotModel.InvalidatePlot(true);
 
-                if (data.Max != MaxValue) MaxValue = data.Max;
-                if (data.Min != MinValue) MinValue = data.Min;
-                if (data.MovingAverage != MovingAverage) MovingAverage = data.MovingAverage;
+                if (data.Statistics[StatisticCalculatorType.MinCalculator] != MinValue) MinValue = data.Statistics[StatisticCalculatorType.MinCalculator];
+                if (data.Statistics[StatisticCalculatorType.MaxCalculator] != MaxValue) MaxValue = data.Statistics[StatisticCalculatorType.MaxCalculator];
+                if (data.Statistics[StatisticCalculatorType.SimpleMovingAverageCalculator] != MovingAverage) MovingAverage = data.Statistics[StatisticCalculatorType.SimpleMovingAverageCalculator];
 
             });
         }

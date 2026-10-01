@@ -8,12 +8,14 @@ namespace AirborneDustMonitor.Core.Rules
         private readonly int _requiredCount;
         private readonly Dictionary<(int sensorID, MetricType metrictype), int> _counts;
         private readonly HashSet<(int sensorID, MetricType metrictype)> _activeAlerts;
+        public bool NotifyByEmail { get; }
 
         public ConsecutiveZeroValuesRule(IAppSettingsService appSettingsService)
         {
             this._requiredCount = appSettingsService.Current.Alert.ConsecutiveZerosAlertCount;
             this._counts = new Dictionary<(int sensorID, MetricType metrictype), int>();
             this._activeAlerts = new HashSet<(int sensorID, MetricType metrictype)>();
+            NotifyByEmail = true;
         }
 
         public Alert? Evaluate(MetricType metricType, int sensorID, decimal value)

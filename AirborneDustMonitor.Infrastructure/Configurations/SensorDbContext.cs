@@ -20,7 +20,6 @@ namespace AirborneDustMonitor.Infrastructure.Configurations
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseSqlServer(_connectionString);
-            _logger.LogDebug("Configuring SensorDbContext with connection string: {ConnectionString}", _connectionString);
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

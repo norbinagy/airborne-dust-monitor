@@ -13,21 +13,6 @@ namespace AirborneDustMonitor.Tests
         }
 
         [Fact]
-        public void SetThreshold_EmailPending()
-        {
-            _thresholdRule.SetThreshold(MetricType.Temperature, 26.5m);
-            Assert.True(_thresholdRule.IsEmailPending(MetricType.Temperature));
-        }
-
-        [Fact]
-        public void SetThreshold_MarkEmailSent_EmailNotPending()
-        {
-            _thresholdRule.SetThreshold(MetricType.Humidity, 60m);
-            _thresholdRule.MarkEmailSent(MetricType.Humidity);
-            Assert.False(_thresholdRule.IsEmailPending(MetricType.Humidity));
-        }
-
-        [Fact]
         public void Evaluate_AboveThreshold_ReturnsAlert()
         {
             int sensorID = 1;

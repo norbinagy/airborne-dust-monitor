@@ -1,6 +1,7 @@
 ﻿using AirborneDustMonitor.Core.Entities;
 using AirborneDustMonitor.Core.Interfaces;
 using AirborneDustMonitor.Core.Statistics;
+using System.Diagnostics;
 
 namespace AirborneDustMonitor.Core.Services
 {
@@ -24,7 +25,8 @@ namespace AirborneDustMonitor.Core.Services
         {
             var calculators = new List<IStatisticCalculator>
             {
-                new MinMaxCalculator(),
+                new MinCalculator(),
+                new MaxCalculator(),
                 new SimpleMovingAverageCalculator(appSettingsService)
             };
             return new MetricPipeline(calculators);
@@ -38,6 +40,7 @@ namespace AirborneDustMonitor.Core.Services
         public void AddSample(decimal value, MetricType metricType, DateTime date, int sensorID)
         {
             _pipelines[metricType].AddSample(value, metricType, date, sensorID);
+            Debug.WriteLine($"DataService.AddSample - Aktuális szál ID: {Thread.CurrentThread.ManagedThreadId} | Háttérszál? {Thread.CurrentThread.IsThreadPoolThread}");
         }
     }
 }

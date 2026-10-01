@@ -5,8 +5,6 @@
         decimal Value,
         DateTime Date,
         int SensorID,
-        decimal Min,
-        decimal Max,
-        decimal MovingAverage
+        IReadOnlyDictionary<StatisticCalculatorType, decimal> Statistics
     );
 }

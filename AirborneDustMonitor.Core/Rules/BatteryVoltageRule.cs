@@ -11,12 +11,14 @@ namespace AirborneDustMonitor.Core.Rules
 
         private readonly Dictionary<int, int> _counts = new();
         private readonly HashSet<int> _activeAlerts = new();
+        public bool NotifyByEmail { get; }
 
         public BatteryVoltageRule(IAppSettingsService settings)
         {
             _minVoltage = settings.Current.Alert.BatteryMinVoltage;
             _maxVoltage = settings.Current.Alert.BatteryMaxVoltage;
             _requiredCount = settings.Current.Alert.BatteryVoltageAlertCount;
+            NotifyByEmail = true;
         }
 
         public Alert? Evaluate(MetricType metricType, int sensorID, decimal value)

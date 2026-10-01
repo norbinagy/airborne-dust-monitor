@@ -27,14 +27,19 @@ namespace AirborneDustMonitor.Core.Services
                 calculator.AddSample(value);
             }
 
+            Dictionary<StatisticCalculatorType, decimal> statistics = new Dictionary<StatisticCalculatorType, decimal>();
+
+            foreach (var calculator in _calculators)
+            {
+                statistics[calculator.Type] = calculator.Value;
+            }
+
             var data = new MetricData(
                 metricType,
                 value,
                 date,
                 sensorID,
-                _calculators.OfType<MinMaxCalculator>().FirstOrDefault().Min,
-                _calculators.OfType<MinMaxCalculator>().FirstOrDefault().Max,
-                _calculators.OfType<SimpleMovingAverageCalculator>().FirstOrDefault().Average
+                statistics
             );
 
             _metricStream.Publish(data);

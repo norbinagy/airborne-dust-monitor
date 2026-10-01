@@ -6,6 +6,8 @@ namespace AirborneDustMonitor.Core.Rules
     {
         private readonly Dictionary<MetricType, decimal> _peaks = new();
 
+        public bool NotifyByEmail { get; } = true;
+
         public Alert? Evaluate(MetricType metricType, int sensorID, decimal value)
         {
             if (!_peaks.TryGetValue(metricType, out var currentPeak) || value > currentPeak)

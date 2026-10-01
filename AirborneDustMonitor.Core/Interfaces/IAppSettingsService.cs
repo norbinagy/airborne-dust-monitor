@@ -3,7 +3,6 @@ using System.Runtime.Versioning;
 
 namespace AirborneDustMonitor.Core.Interfaces
 {
-    [SupportedOSPlatform("windows")]
     public interface IAppSettingsService
     {
         AppSettings Current { get; }

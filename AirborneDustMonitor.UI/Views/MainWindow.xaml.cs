@@ -1,4 +1,5 @@
 ﻿using AirborneDustMonitor.UI.ViewModels;
+using System.Diagnostics;
 using System.Windows;
 
 namespace AirborneDustMonitor.UI.Views
@@ -12,6 +13,7 @@ namespace AirborneDustMonitor.UI.Views
         {
             InitializeComponent();
             DataContext = viewModel;
+
         }
 
         private void Window_Closed(object sender, EventArgs e)

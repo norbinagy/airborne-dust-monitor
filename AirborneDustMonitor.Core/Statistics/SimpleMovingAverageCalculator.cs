@@ -1,4 +1,5 @@
-﻿using AirborneDustMonitor.Core.Interfaces;
+﻿using AirborneDustMonitor.Core.Entities;
+using AirborneDustMonitor.Core.Interfaces;
 
 namespace AirborneDustMonitor.Core.Statistics
 {
@@ -14,6 +15,10 @@ namespace AirborneDustMonitor.Core.Statistics
                 return _dataQueue.Count > 0 ? _sum / _dataQueue.Count : 0;
             }
         }
+
+        public decimal Value => Average;
+
+        public StatisticCalculatorType Type => StatisticCalculatorType.SimpleMovingAverageCalculator;
 
         public SimpleMovingAverageCalculator(IAppSettingsService appSettingsService)
         {

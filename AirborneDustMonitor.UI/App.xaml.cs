@@ -12,6 +12,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Serilog;
+using System.Diagnostics;
 using System.Windows;
 
 namespace AirborneDustMonitor.UI
@@ -28,10 +29,10 @@ namespace AirborneDustMonitor.UI
             _host = Host.CreateDefaultBuilder()
                 .ConfigureServices((context, services) =>
                 {
-                    services.AddHostedService<SensorPollingService>();
                     services.AddDbContext<SensorDbContext>();
                     services.AddScoped<ISensorDb, SensorDb>();
                     services.AddSingleton<IAppSettingsService, JsonAppSettingsService>();
+                    services.AddSingleton<SensorMonitor>();
                     services.AddSingleton<AlertService>();
                     services.AddSingleton<DataService>();
                     services.AddSingleton<IEmailSender, MailKitEmailSender>();

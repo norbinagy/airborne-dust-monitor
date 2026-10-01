@@ -4,7 +4,9 @@ using AirborneDustMonitor.UI.Services;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Windows;
+using System.Windows.Threading;
 
 namespace AirborneDustMonitor.UI.ViewModels
 {
@@ -13,6 +15,7 @@ namespace AirborneDustMonitor.UI.ViewModels
     {
         public ObservableCollection<MetricDisplayViewModel> MetricDisplays { get; }
         private readonly AlertService _alertService;
+        private readonly SensorMonitor _monitor;
         private readonly IWindowService _windowService;
 
         [ObservableProperty]
@@ -21,11 +24,15 @@ namespace AirborneDustMonitor.UI.ViewModels
         [ObservableProperty]
         private bool _isToastOpen;
 
-        public MainWindowViewModel(DataService provider, AlertService alertService, IWindowService windowService)
+        private readonly DispatcherTimer _timer = new();
+        private bool _busy;
+
+        public MainWindowViewModel(SensorMonitor monitor, DataService provider, AlertService alertService, IWindowService windowService)
         {
             MetricDisplays = new ObservableCollection<MetricDisplayViewModel>();
             _alertService = alertService;
             _windowService = windowService;
+            _monitor = monitor;
 
             var particulateMatterDisplay = new MetricDisplayViewModel("Szállópor", MetricType.ParticulateMatter, alertService);
             var temperatureDisplay = new MetricDisplayViewModel("Hőmérséklet (°C)", MetricType.Temperature, alertService);
@@ -43,6 +50,18 @@ namespace AirborneDustMonitor.UI.ViewModels
             MetricDisplays.Add(batteryDisplay);
 
             alertService.AlertRaised += AlertHandler;
+
+            _timer.Interval = TimeSpan.FromMilliseconds(1000);
+            _timer.Tick += async (_, _) =>
+            {
+                if (_busy) return;
+                _busy = true;
+                try { await _monitor.PollOnceAsync(); }
+                catch (Exception ex) { Debug.Write(ex, "Poll failed"); }
+                finally { _busy = false; }
+            };
+            _timer.Start();
+
         }
 
         public void DisposeMetricDisplays()
@@ -67,7 +86,7 @@ namespace AirborneDustMonitor.UI.ViewModels
         {
             ToastMessage = message;
             IsToastOpen = true;
-
+            
             try
             {
                 await Task.Delay(5000);
