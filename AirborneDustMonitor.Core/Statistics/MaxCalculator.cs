@@ -1,7 +1,5 @@
 ﻿using AirborneDustMonitor.Core.Entities;
-using System;
-using System.Collections.Generic;
-using System.Text;
+using AirborneDustMonitor.Core.Interfaces.Statistics;
 
 namespace AirborneDustMonitor.Core.Statistics
 {

@@ -1,6 +1,6 @@
 ﻿using AirborneDustMonitor.Core.Entities;
+using AirborneDustMonitor.Core.Interfaces.Services;
 using AirborneDustMonitor.Core.Rules;
-using AirborneDustMonitor.Core.Services;
 using CommunityToolkit.Mvvm.ComponentModel;
 using OxyPlot;
 using OxyPlot.Axes;
@@ -21,7 +21,7 @@ namespace AirborneDustMonitor.UI.ViewModels
         public ObservableCollection<int> AlertingSensors { get; } = new();
 
         private readonly Dictionary<int, LineSeries> _sensorSeries;
-        private readonly AlertService _alertService;
+        private readonly IAlertService _alertService;
         private IDisposable _unsubscriber;
         private const int MaxDataPoints = 50;
 
@@ -34,7 +34,7 @@ namespace AirborneDustMonitor.UI.ViewModels
         [ObservableProperty]
         private decimal _thresholdValue;
 
-        public MetricDisplayViewModel(string name, MetricType metricType, AlertService alertService)
+        public MetricDisplayViewModel(string name, MetricType metricType, IAlertService alertService)
         {
             Name = name;
             MetricType = metricType;

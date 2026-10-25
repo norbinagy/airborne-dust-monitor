@@ -1,4 +1,5 @@
 ﻿using AirborneDustMonitor.Core.Entities;
+using AirborneDustMonitor.Core.Interfaces.Rules;
 
 namespace AirborneDustMonitor.Core.Rules
 {

@@ -1,5 +1,6 @@
 ﻿using AirborneDustMonitor.Core.Email;
-using AirborneDustMonitor.Core.Interfaces;
+using AirborneDustMonitor.Core.Interfaces.Configuration;
+using AirborneDustMonitor.Core.Interfaces.Email;
 using AirborneDustMonitor.Core.Settings;
 using MailKit.Net.Smtp;
 using MailKit.Security;

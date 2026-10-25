@@ -1,4 +1,6 @@
-﻿namespace AirborneDustMonitor.Core.Email
+﻿using AirborneDustMonitor.Core.Email;
+
+namespace AirborneDustMonitor.Core.Interfaces.Email
 {
     public interface IEmailSender
     {

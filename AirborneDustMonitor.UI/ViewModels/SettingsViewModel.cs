@@ -1,4 +1,4 @@
-﻿using AirborneDustMonitor.Core.Interfaces;
+﻿using AirborneDustMonitor.Core.Interfaces.Configuration;
 using AirborneDustMonitor.Core.Settings;
 using AirborneDustMonitor.Infrastructure;
 using CommunityToolkit.Mvvm.ComponentModel;

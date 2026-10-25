@@ -1,6 +1,6 @@
 ﻿using AirborneDustMonitor.Core.Entities;
 
-namespace AirborneDustMonitor.Core.Statistics
+namespace AirborneDustMonitor.Core.Interfaces.Statistics
 {
     public interface IStatisticCalculator
     {

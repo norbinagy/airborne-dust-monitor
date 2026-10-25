@@ -1,7 +1,7 @@
 ﻿using AirborneDustMonitor.Core.Settings;
 using System.Runtime.Versioning;
 
-namespace AirborneDustMonitor.Core.Interfaces
+namespace AirborneDustMonitor.Core.Interfaces.Configuration
 {
     public interface IAppSettingsService
     {

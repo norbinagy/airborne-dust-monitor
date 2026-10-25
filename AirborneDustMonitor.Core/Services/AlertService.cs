@@ -1,78 +1,47 @@
-﻿using AirborneDustMonitor.Core.Email;
-using AirborneDustMonitor.Core.Entities;
-using AirborneDustMonitor.Core.Interfaces;
-using AirborneDustMonitor.Core.Rules;
+﻿using AirborneDustMonitor.Core.Entities;
+using AirborneDustMonitor.Core.Interfaces.Rules;
+using AirborneDustMonitor.Core.Interfaces.Services;
 
 namespace AirborneDustMonitor.Core.Services
 {
     // Az AlertService a regisztrált szabályok (Rule) alapján értékeli a bejövő mintákat, és szükség esetén riasztásokat generál eseményként.
-    public class AlertService
+    public class AlertService : IAlertService
     {
-        private readonly IEmailSender _emailSender;
-        private bool _isEmailAlertActive;
+        private readonly IAlertRuleProvider _ruleProvider;
+        private readonly IReadOnlyCollection<IAlertNotifier> _notifiers;
         public event Action<Alert>? AlertRaised;
-        private readonly Dictionary<Type, IAlertRule> _alertRules;
-        private readonly string _emailTo;
 
-        public AlertService(IEmailSender emailSender, IAppSettingsService appSettingsService)
+        public AlertService(IAlertRuleProvider ruleProvider, IEnumerable<IAlertNotifier> notifiers)
         {
-            _alertRules = new Dictionary<Type, IAlertRule>();
-            RegisterRule(new ThresholdRule());
-            RegisterRule(new PeakRule());
-            RegisterRule(new BatteryVoltageRule(appSettingsService));
-            RegisterRule(new ConsecutiveZeroValuesRule(appSettingsService));
-            this._emailSender = emailSender;
-            _emailTo = appSettingsService.Current.Email.To;
-            _isEmailAlertActive = appSettingsService.Current.Alert.EnableEmailAlerts;
+            _ruleProvider = ruleProvider;
+            _notifiers = notifiers.ToList().AsReadOnly();
         }
 
-        // A ProcessSample metódus a bejövő mintákat értékeli a regisztrált szabályok alapján, és ha egy szabály nem null Alert-et ad vissza, azt kiváltja illetve emailt küld(kivéve csúcsértékekről), ha aktív a beállítás.
+        // A ProcessSample metódus a bejövő mintákat értékeli a regisztrált szabályok alapján, és ha egy szabály nem null Alert-et ad vissza, azt kiváltja és értesítést küld a notifier komponenseken keresztül.
         public async Task ProcessSampleAsync(MetricType metricType, int sensorID, decimal value)
         {
-            foreach (var rule in _alertRules)
+            foreach (var rule in _ruleProvider.GetActiveRules())
             {
-                var ruleType = rule.Key;
-                var ruleInstance = rule.Value;
-
-                var alert = ruleInstance.Evaluate(metricType, sensorID, value);
+                var alert = rule.Evaluate(metricType, sensorID, value);
                 if (alert != null)
                 {
                     AlertRaised?.Invoke(alert);
 
-                    if (ruleInstance.NotifyByEmail && _isEmailAlertActive)
+                    if (rule.NotifyByEmail)
                     {
-                        await HandleEmailAlertAsync(alert);
+                        foreach (var notifier in _notifiers)
+                        {
+                            await notifier.NotifyAsync(alert);
+                        }
                     }
                 }
             }
         }
 
-        // A HandleEmailAlertAsync metódus aszinkron módon küldi el az emailt a megadott címre, a riasztás üzenetével és időpontjával.
-        public async Task HandleEmailAlertAsync(Alert alert)
-        {
-            EmailMessage email = new EmailMessage
-            {
-                To = _emailTo,
-                Subject = "Szenzor riasztás!",
-                Body = $"{alert.Message}\nIdőpont: {alert.Date}"
-            };
-            await _emailSender.SendAsync(email);
-        }
-
-        // A RegisterRule metódus regisztrál egy új szabályt az AlertService-ben.
-        private void RegisterRule<T>(T rule) where T : IAlertRule
-        {
-            _alertRules[typeof(T)] = rule;
-        }
-
-        // A GetRule metódus visszaadja a megadott típusú szabályt, ha az regisztrálva van, különben null értéket ad vissza.
+        // A GetRule metódus visszaadja a megadott típusú szabályt, ha elérhető az aktív szabályok között.
         public T? GetRule<T>() where T : class, IAlertRule
         {
-            if (_alertRules.TryGetValue(typeof(T), out var rule))
-            {
-                return rule as T;
-            }
-            return null;
+            return _ruleProvider.GetRule<T>();
         }
     }
 }

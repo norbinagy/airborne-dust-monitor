@@ -1,34 +1,28 @@
 ﻿using AirborneDustMonitor.Core.Entities;
-using AirborneDustMonitor.Core.Interfaces;
-using AirborneDustMonitor.Core.Statistics;
+using AirborneDustMonitor.Core.Interfaces.Services;
 using System.Diagnostics;
 
 namespace AirborneDustMonitor.Core.Services
 {
     // A Dataservice a beérkező adatok kezeléséért felelős, a megfelelő pipeline-ba helyezi azokat és biztosítja a statisztikák számítását, illetve biztosít egy adat stream-et amivel fel lehet iratkozni a kívánt metrikákra.
-    public class DataService
+    public class DataService : IDataService
     {
         private readonly Dictionary<MetricType, MetricPipeline> _pipelines;
 
-        public DataService(IAppSettingsService appSettingsService)
+        public DataService(IStatisticCalculatorProvider statisticCalculatorProvider)
         {
             _pipelines = new Dictionary<MetricType, MetricPipeline>
             {
-                { MetricType.ParticulateMatter, CreatePipeline(appSettingsService) },
-                { MetricType.Temperature, CreatePipeline(appSettingsService) },
-                { MetricType.Humidity, CreatePipeline(appSettingsService) },
-                { MetricType.BatteryVoltage, CreatePipeline(appSettingsService) }
+                { MetricType.ParticulateMatter, CreatePipeline(statisticCalculatorProvider, MetricType.ParticulateMatter) },
+                { MetricType.Temperature, CreatePipeline(statisticCalculatorProvider, MetricType.Temperature) },
+                { MetricType.Humidity, CreatePipeline(statisticCalculatorProvider, MetricType.Humidity) },
+                { MetricType.BatteryVoltage, CreatePipeline(statisticCalculatorProvider, MetricType.BatteryVoltage) }
             };
         }
 
-        private MetricPipeline CreatePipeline(IAppSettingsService appSettingsService)
+        private static MetricPipeline CreatePipeline(IStatisticCalculatorProvider statisticCalculatorProvider, MetricType metricType)
         {
-            var calculators = new List<IStatisticCalculator>
-            {
-                new MinCalculator(),
-                new MaxCalculator(),
-                new SimpleMovingAverageCalculator(appSettingsService)
-            };
+            var calculators = statisticCalculatorProvider.GetCalculators(metricType);
             return new MetricPipeline(calculators);
         }
 

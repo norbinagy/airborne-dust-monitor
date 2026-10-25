@@ -1,6 +1,6 @@
 ﻿using AirborneDustMonitor.Core.Entities;
 
-namespace AirborneDustMonitor.Core.Interfaces
+namespace AirborneDustMonitor.Core.Interfaces.Persistence
 {
     public interface ISensorDb
     {

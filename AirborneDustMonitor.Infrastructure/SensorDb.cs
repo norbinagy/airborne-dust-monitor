@@ -1,5 +1,5 @@
 ﻿using AirborneDustMonitor.Core.Entities;
-using AirborneDustMonitor.Core.Interfaces;
+using AirborneDustMonitor.Core.Interfaces.Persistence;
 using AirborneDustMonitor.Infrastructure.Configurations;
 using Microsoft.EntityFrameworkCore;
 

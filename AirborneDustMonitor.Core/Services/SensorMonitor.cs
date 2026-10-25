@@ -1,19 +1,17 @@
 ﻿using AirborneDustMonitor.Core.Entities;
-using AirborneDustMonitor.Core.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Text;
+using AirborneDustMonitor.Core.Interfaces.Persistence;
+using AirborneDustMonitor.Core.Interfaces.Services;
 
 namespace AirborneDustMonitor.Core.Services
 {
-    public class SensorMonitor
+    public class SensorMonitor : ISensorMonitor
     {
         private DateTime _date;
-        private DataService _metrics;
-        private AlertService _alerts;
-        private ISensorDb _repo;
+        private readonly IDataService _metrics;
+        private readonly IAlertService _alerts;
+        private readonly ISensorDb _repo;
 
-        public SensorMonitor(ISensorDb repo, DataService metrics, AlertService alerts)
+        public SensorMonitor(ISensorDb repo, IDataService metrics, IAlertService alerts)
         {
             _repo = repo;
             _metrics = metrics;

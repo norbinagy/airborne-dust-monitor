@@ -1,5 +1,5 @@
 ﻿using AirborneDustMonitor.Core.Entities;
-using AirborneDustMonitor.Core.Services;
+using AirborneDustMonitor.Core.Interfaces.Services;
 using AirborneDustMonitor.UI.Services;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -14,8 +14,8 @@ namespace AirborneDustMonitor.UI.ViewModels
     public partial class MainWindowViewModel : ObservableObject, IDisposable
     {
         public ObservableCollection<MetricDisplayViewModel> MetricDisplays { get; }
-        private readonly AlertService _alertService;
-        private readonly SensorMonitor _monitor;
+        private readonly IAlertService _alertService;
+        private readonly ISensorMonitor _monitor;
         private readonly IWindowService _windowService;
 
         [ObservableProperty]
@@ -27,7 +27,7 @@ namespace AirborneDustMonitor.UI.ViewModels
         private readonly DispatcherTimer _timer = new();
         private bool _busy;
 
-        public MainWindowViewModel(SensorMonitor monitor, DataService provider, AlertService alertService, IWindowService windowService)
+        public MainWindowViewModel(ISensorMonitor monitor, IDataService provider, IAlertService alertService, IWindowService windowService)
         {
             MetricDisplays = new ObservableCollection<MetricDisplayViewModel>();
             _alertService = alertService;
